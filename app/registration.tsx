@@ -8,7 +8,7 @@ export default function RegistrationScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Student Registration</Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.back()}>
+      <TouchableOpacity style={styles.button} onPress={() => router.replace('/login')}>
         <Text style={styles.buttonText}>Close</Text>
       </TouchableOpacity>
     </View>

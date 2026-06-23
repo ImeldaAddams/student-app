@@ -1,48 +1,24 @@
-// app/_layout.tsx
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Stack } from 'expo-router';
-import { View, ActivityIndicator, Text, StyleSheet } from 'react-native';
-import { initializeDatabase } from './database';
+import { initializeDatabase } from './_database-service'; // Import the database initialization service [cite: 248]
 
 export default function RootLayout() {
-  const [isDbReady, setIsDbReady] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  
+  // The Init Hook: This runs once the very millisecond the app boots up
   useEffect(() => {
-    initializeDatabase()
-      .then(() => {
-        console.log('SQLite Database tables initialized successfully.');
-        setIsDbReady(true);
-      })
-      .catch((err) => {
-        console.error('Database configuration failure:', err);
-        setError('Failed to initialize local data storage.');
-      });
+    try {
+      initializeDatabase(); // Triggers the SQLite table creations [cite: 210-211, 248]
+    } catch (error) {
+      console.error("Database failed to initialize:", error);
+    }
   }, []);
 
-  if (!isDbReady) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>
-          {error ? error : 'Setting up local persistent storage...'}
-        </Text>
-      </View>
-    );
-  }
-
-  // WE ADDED THE REGISTRATION ROUTE DIRECTLY BELOW IN THE STACK
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="login" />
       <Stack.Screen name="signup" />
       <Stack.Screen name="dashboard" />
-      <Stack.Screen name="registration" /> 
+      <Stack.Screen name="api-consumer" />
     </Stack>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5F7FA' },
-  loadingText: { marginTop: 12, fontSize: 15, color: '#6C727A', fontWeight: '500' },
-});
